@@ -120,7 +120,7 @@ export const LandingFeatures = () => {
               </Button>
             </div>
             <p className="leading-7 text-sm line-clamp-3">
-              Don't Let Confusion Get in the Way of Your Adventure! With Bundle
+              Don&apos;t Let Confusion Get in the Way of Your Adventure! With Bundle
               or Pack Purchase options, we have simplified the rental experience
               for you. Discover carefully curated packages that include
               everything you need for a successful camping adventure.
