@@ -21,16 +21,18 @@ export const LandingHeader = () => {
     <nav className="flex items-center justify-between">
       <Image src={logo} alt="Camprental" width={100} height={100} />
       <LandingNavbar />
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button size={"icon"} variant={"outline"}>
-            <CiMenuFries className="w-4 h-4" />
-          </Button>
-        </SheetTrigger>
-        <SheetContent>
-          <LandingNavbar isMobile />
-        </SheetContent>
-      </Sheet>
+      <div className="block md:hidden">
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button size={"icon"} variant={"outline"}>
+              <CiMenuFries className="w-4 h-4" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent>
+            <LandingNavbar isMobile />
+          </SheetContent>
+        </Sheet>
+      </div>
     </nav>
   );
 };

@@ -10,9 +10,9 @@ export const LandingBanner = () => {
           Camprental
         </h1>
         <blockquote className="border-l-2 pl-6 italic">
-          "Enhance Your Camping Experience with Our Trusted Rental Services:
+          &quot;Enhance Your Camping Experience with Our Trusted Rental Services:
           Find Quality Gear, Get Comprehensive Guidance, and Start Your
-          Adventure with Confidence and Unlimited Comfort!"
+          Adventure with Confidence and Unlimited Comfort!&quot;
         </blockquote>
         <Button
           variant={"ghost"}

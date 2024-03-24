@@ -18,7 +18,7 @@ export const LandingNavbar = ({ isMobile = false }: LandingNavbarProps) => {
         isMobile
           ? "flex flex-col items-start pt-4 md:hidden"
           : "hidden md:flex items-center",
-        " gap-4"
+        "gap-4"
       )}
     >
       {isMobile && <ModeToggle />}
