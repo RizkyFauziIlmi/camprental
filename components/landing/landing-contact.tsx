@@ -18,7 +18,7 @@ export const LandingContact = () => {
         <p className="text-muted-foreground">see code and project detail.</p>
         <div className="flex flex-col">
           <Button variant={"link"} className="p-0 w-fit" asChild>
-            <Link href={"https://www.camprental.vercel.app"} target="_blank">
+            <Link href={"https://camprental.vercel.app/"} target="_blank">
               <BsWindow className="w-4 h-4 mr-2" />
               See Live Demo <GoLinkExternal className="h-3 w-3 ml-2" />
             </Link>
