@@ -65,3 +65,31 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+enum ItemCategory {
+  TENT
+  SLEEP_REST
+  FURNITURE_COOK_EQUIP
+  COOKWARE
+  HYGIENE_HEALTH
+  LIGHT_ELECTRIC
+  NAVIGATION_SECURITY
+  OUTDOOR_EQUIP
+  TRANSPORT_EQUIP
+}
+
+model Item {
+  id          String       @id @default(cuid())
+  name        String
+  description String
+  price       Float
+  category    ItemCategory
+  imageUrl    String
+  stock       Int
+  maxBookings Int          @default(1)
+  maxDate     DateTime     @default(now())
+  available   Boolean      @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

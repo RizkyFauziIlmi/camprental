@@ -1,0 +1,18 @@
+-- CreateEnum
+CREATE TYPE "ItemCategory" AS ENUM ('TENT', 'SLEEP_REST', 'FURNITURE_COOK_EQUIP', 'COOKWARE', 'HYGIENE_HEALTH', 'LIGHT_ELECTRIC', 'NAVIGATION_SECURITY', 'OUTDOOR_EQUIP', 'TRANSPORT_EQUIP');
+
+-- CreateTable
+CREATE TABLE "Item" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "price" DOUBLE PRECISION NOT NULL,
+    "category" "ItemCategory" NOT NULL,
+    "imageUrl" TEXT NOT NULL,
+    "maxBookings" INTEGER NOT NULL DEFAULT 1,
+    "available" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Item_pkey" PRIMARY KEY ("id")
+);
