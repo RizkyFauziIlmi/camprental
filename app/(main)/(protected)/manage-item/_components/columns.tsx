@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { convertFloatToIDR } from "@/lib/string";
 import { Item } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, addDays } from "date-fns";
 import Image from "next/image";
 import { MdMoreHoriz } from "react-icons/md";
 
@@ -129,7 +129,7 @@ export const columns: ColumnDef<Item>[] = [
     },
     cell: ({ row }) => {
       return (
-        <p className="text-sm font-medium leading-none">
+        <p className="text-sm font-medium leading-none text-center">
           {row.getValue("maxBookings")} items
         </p>
       );
@@ -150,8 +150,8 @@ export const columns: ColumnDef<Item>[] = [
     },
     cell: ({ row }) => {
       return (
-        <p className="text-sm font-medium leading-none">
-          {formatDistanceToNow(row.getValue("maxDate"))}
+        <p className="text-sm font-medium leading-none text-center">
+          {formatDistanceToNow(addDays(new Date(), row.getValue("maxDate")))}
         </p>
       );
     },

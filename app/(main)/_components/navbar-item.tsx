@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -10,6 +10,7 @@ interface NavbarItemProps {
 
 export const NavbarItem = ({ isMobile = false }: NavbarItemProps) => {
   const pathname = usePathname();
+  const router = useRouter();
 
   const isHome = pathname === "/";
   const isExplore = pathname === "/explore";
@@ -29,6 +30,7 @@ export const NavbarItem = ({ isMobile = false }: NavbarItemProps) => {
       </Button>
       <Button
         variant={isMobile ? "ghost" : "link"}
+        onClick={() => router.push("/explore")}
         className={cn(
           isExplore ? "text-primary" : "text-muted-foreground",
           isExplore && isMobile ? "bg-accent" : "",

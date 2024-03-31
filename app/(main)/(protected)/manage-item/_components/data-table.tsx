@@ -71,7 +71,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div>
+    <div className="w-full">
       <div className="flex justify-between items-center py-4">
         <Input
           placeholder="Filter names..."
@@ -82,7 +82,11 @@ export function DataTable<TData, TValue>({
           className="max-w-sm"
         />
         <div className="flex items-center gap-2">
-          <Button className="w-fit" size={"sm"} onClick={() => router.push("/manage-item/add-item")}>
+          <Button
+            className="w-fit"
+            size={"sm"}
+            onClick={() => router.push("/manage-item/add-item")}
+          >
             <GoPlus className="w-4 h-4 mr-2" />
             Add Item
           </Button>

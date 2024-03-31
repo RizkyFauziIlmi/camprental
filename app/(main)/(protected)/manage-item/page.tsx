@@ -15,7 +15,7 @@ export default async function ManageItemPage() {
 
   return (
     <div className="flex items-center py-12 justify-center">
-      <Card>
+      <Card className="w-11/12">
         <CardHeader>
           <CardTitle>Products</CardTitle>
           <CardDescription>
