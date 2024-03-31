@@ -5,6 +5,12 @@
 export const publicRoutes = ["/"];
 
 /**
+ * These routes do required authentication role admin
+ * @type {string[]}
+ */
+export const protectedRoute = ["/manage-item", "/dashboard"]
+
+/**
  *  an array of routes that are used for authentication
  *  These routes will redirect to logge in users to /settings
  * @type {string[]}

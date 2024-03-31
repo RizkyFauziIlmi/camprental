@@ -87,7 +87,7 @@ model Item {
   imageUrl    String
   stock       Int
   maxBookings Int          @default(1)
-  maxDate     DateTime     @default(now())
+  maxDate     Int          @default(1)
   available   Boolean      @default(true)
 
   createdAt DateTime @default(now())

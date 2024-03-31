@@ -4,11 +4,13 @@ import {
   DEFAULT_LOGIN_REDIRECT,
   apiAuthPrefix,
   authRoutes,
+  protectedRoute,
   publicRoutes,
 } from "./routes";
+import { currentRole } from "./lib/auth";
 export const { auth } = NextAuth(authConfig);
 
-export default auth((req) => {
+export default auth(async (req) => {
   const { nextUrl } = req;
 
   const isLoggedin = !!req.auth;
@@ -16,6 +18,9 @@ export default auth((req) => {
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+  const isProtectedRoute = protectedRoute.includes(
+    "/" + nextUrl.pathname.split("/")[1]
+  );
 
   if (isApiAuthRoute) {
     return;
@@ -26,6 +31,12 @@ export default auth((req) => {
       return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
     }
     return;
+  }
+
+  const role = await currentRole();
+
+  if (isProtectedRoute && role !== "ADMIN") {
+    return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
   }
 
   if (!isPublicRoute && !isLoggedin) {
