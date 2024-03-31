@@ -58,7 +58,10 @@ export const addItem = async (values: z.infer<typeof ItemSchema>) => {
   redirect("/manage-item");
 };
 
-export const editItem = async (values: z.infer<typeof ItemSchema>, itemId: string) => {
+export const editItem = async (
+  values: z.infer<typeof ItemSchema>,
+  itemId: string
+) => {
   const session = await auth();
   const role = await currentRole();
 
@@ -89,7 +92,7 @@ export const editItem = async (values: z.infer<typeof ItemSchema>, itemId: strin
   try {
     await db.item.update({
       where: {
-        id: itemId
+        id: itemId,
       },
       data: {
         name,
@@ -104,9 +107,45 @@ export const editItem = async (values: z.infer<typeof ItemSchema>, itemId: strin
       },
     });
   } catch (error) {
-    return { error: "Error Creating Item" };
+    return { error: "Error Updating Item" };
   }
 
   revalidatePath("/manage-item");
   redirect("/manage-item");
+};
+
+export const deleteItem = async (itemId: string) => {
+  const session = await auth();
+  const role = await currentRole();
+
+  if (!session || role !== "ADMIN") {
+    return { error: "Unauthorized" };
+  }
+
+  const existingItem = await db.item.findUnique({
+    where: {
+      id: itemId,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!existingItem) {
+    return { error: "Invalid Item ID" };
+  }
+
+  try {
+    await db.item.delete({
+      where: {
+        id: existingItem.id,
+      },
+    });
+
+    revalidatePath(`/manage-item`);
+
+    return { success: "Item Deleted Successfully" };
+  } catch (error) {
+    return { error: "Error Deleting Item" };
+  }
 };

@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { EditItemForm } from "../_components/edit-item-form";
+import { redirect } from "next/navigation";
 
 export default async function EditItemId({
   params,
@@ -13,7 +14,7 @@ export default async function EditItemId({
   });
 
   if (!item) {
-    return null
+    return redirect("/manage-item");
   }
 
   return <EditItemForm item={item} />;
