@@ -46,7 +46,7 @@ import { convertFloatToIDR } from "@/lib/string";
 import { addDays, formatDistanceToNow } from "date-fns";
 import { Switch } from "@/components/ui/switch";
 import { UploadDropzone } from "@/lib/uploadthing";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import Link from "next/link";
 import { IoMdAdd, IoMdCloseCircle } from "react-icons/io";
 import { AiOutlineLoading } from "react-icons/ai";
@@ -54,23 +54,29 @@ import { MdCheckCircle, MdError } from "react-icons/md";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { BreadcrumbPathname } from "@/components/breadcrumb-pathname";
-import { addItem } from "@/actions/item";
+import { editItem } from "@/actions/item";
+import { Item } from "@prisma/client";
+import { CiEdit } from "react-icons/ci";
 
-export const AddItemForm = () => {
+interface EditItemFormProps {
+  item: Item;
+}
+
+export const EditItemForm = ({ item }: EditItemFormProps) => {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof ItemSchema>>({
     resolver: zodResolver(ItemSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      price: 1000,
-      stock: 1,
-      available: true,
-      category: undefined,
-      imageUrl: "",
-      maxBookings: 1,
-      maxDate: 1,
+      name: item.name,
+      description: item.description,
+      price: item.price,
+      stock: item.stock,
+      available: item.available,
+      category: item.category,
+      imageUrl: item.imageUrl,
+      maxBookings: item.maxBookings,
+      maxDate: item.maxDate,
     },
   });
 
@@ -84,7 +90,7 @@ export const AddItemForm = () => {
 
   const onSubmit = (values: z.infer<typeof ItemSchema>) => {
     startTransition(() => {
-      addItem(values)
+      editItem(values, item.id)
         .then((res) => {
           if (res) {
             toast(res.error, {
@@ -527,9 +533,9 @@ export const AddItemForm = () => {
                 {isPending ? (
                   <AiOutlineLoading className="animate-spin w-4 h-4 mr-2" />
                 ) : (
-                  <IoMdAdd className="w-4 h-4 mr-2" />
+                  <CiEdit className="w-4 h-4 mr-2" />
                 )}
-                {isPending ? "Creating" : "Create"}
+                {isPending ? "Updating" : "Update"}
               </Button>
             </div>
           </div>

@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { CiEdit, CiTrash } from "react-icons/ci";
 import { HiOutlineChevronUpDown } from "react-icons/hi2";
+import { useRouter } from "next/navigation";
 
 export const columns: ColumnDef<Item>[] = [
   {
@@ -159,7 +160,8 @@ export const columns: ColumnDef<Item>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const payment = row.original;
+      const router = useRouter();
+      const item = row.original;
 
       return (
         <DropdownMenu>
@@ -172,7 +174,9 @@ export const columns: ColumnDef<Item>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onSelect={() => router.push(`/manage-item/edit-item/${item.id}`)}
+            >
               <CiEdit className="w-4 h-4 mr-2" /> Edit
             </DropdownMenuItem>
             <DropdownMenuItem>

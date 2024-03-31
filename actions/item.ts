@@ -57,3 +57,56 @@ export const addItem = async (values: z.infer<typeof ItemSchema>) => {
   revalidatePath("/manage-item");
   redirect("/manage-item");
 };
+
+export const editItem = async (values: z.infer<typeof ItemSchema>, itemId: string) => {
+  const session = await auth();
+  const role = await currentRole();
+
+  if (!session || role !== "ADMIN") {
+    return { error: "Unauthorized" };
+  }
+
+  // validate form
+  const validatedFields = ItemSchema.safeParse(values);
+
+  if (!validatedFields.success) {
+    return { error: "Invalid Fields" };
+  }
+
+  const {
+    name,
+    description,
+    imageUrl,
+    stock,
+    category,
+    available,
+    price,
+    maxBookings,
+    maxDate,
+  } = validatedFields.data;
+
+  // add item to database
+  try {
+    await db.item.update({
+      where: {
+        id: itemId
+      },
+      data: {
+        name,
+        description,
+        imageUrl,
+        stock,
+        category,
+        available,
+        price,
+        maxBookings,
+        maxDate,
+      },
+    });
+  } catch (error) {
+    return { error: "Error Creating Item" };
+  }
+
+  revalidatePath("/manage-item");
+  redirect("/manage-item");
+};
