@@ -13,7 +13,7 @@ import logoImage from "@/public/logo.png";
 export const MainNavbar = ({ user }: { user: User | null | undefined }) => {
   return (
     <div className="flex justify-center sticky top-0 z-50">
-      <nav className="w-11/12 flex items-center bg-background justify-between shadow-lg p-2 rounded-b-lg">
+      <nav className="w-11/12 flex items-center bg-background dark:border justify-between shadow-lg p-2 rounded-b-lg">
         <Image
           src={logoImage}
           alt="logo"
