@@ -73,6 +73,23 @@ export const columns: ColumnDef<Item>[] = [
     },
   },
   {
+    accessorKey: "available",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Status
+          <HiOutlineChevronUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      return <Badge variant={"outline"}>{row.getValue("available") ? "Available" : "Not Available"}</Badge>;
+    },
+  },
+  {
     accessorKey: "category",
     header: ({ column }) => {
       return (
