@@ -164,7 +164,7 @@ export const CartDetails = ({ items }: CartDetailsProps) => {
             <div className="font-semibold">Order Details</div>
             <ul className="grid gap-3">
               {items.map((item) => (
-                <li className="flex items-center justify-between">
+                <li key={item.id} className="flex items-center justify-between">
                   <span className="text-muted-foreground">
                     {item.name} x <span>{item.count}</span>
                   </span>
