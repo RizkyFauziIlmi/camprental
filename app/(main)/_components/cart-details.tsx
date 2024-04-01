@@ -13,11 +13,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
-import { CartItem } from "@/hooks/use-cart";
+import { CartItem, useCartStore } from "@/hooks/use-cart";
 import { convertFloatToIDR } from "@/lib/string";
 import { addDays, differenceInDays, format, formatDate } from "date-fns";
 import { useEffect, useState } from "react";
@@ -34,12 +33,16 @@ import { CalendarIcon } from "@radix-ui/react-icons";
 import { Calendar } from "@/components/ui/calendar";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { init } from "@paralleldrive/cuid2";
+import Image from "next/image";
+import { GoTrash } from "react-icons/go";
 
 interface CartDetailsProps {
   items: CartItem[];
 }
 
 export const CartDetails = ({ items }: CartDetailsProps) => {
+  const { clearCart, deleteItem } = useCartStore();
+
   const createId = init({
     // A custom random function with the same API as Math.random.
     random: Math.random,
@@ -65,11 +68,11 @@ export const CartDetails = ({ items }: CartDetailsProps) => {
 
     // Membersihkan interval saat komponen di-unmount
     return () => clearInterval(intervalId);
-  }, []);
+  }, [createId]);
 
   const daysDifference = differenceInDays(date?.to as Date, date?.from as Date);
 
-  const maxBookingDays = items.sort((a, b) => b.maxDate - a.maxDate)[0].maxDate;
+  const maxBookingDays = items.sort((a, b) => a.maxDate - b.maxDate)[0].maxDate;
 
   const maxBookingDate = addDays(new Date(), maxBookingDays);
 
@@ -118,7 +121,8 @@ export const CartDetails = ({ items }: CartDetailsProps) => {
             defaultMonth={date?.from}
             selected={date}
             disabled={(date) =>
-              addDays(date, 1) < new Date() || date > maxBookingDate
+              addDays(date, 1) < new Date() ||
+              addDays(date, -1) > maxBookingDate
             }
             onSelect={setDate}
             numberOfMonths={2}
@@ -155,6 +159,9 @@ export const CartDetails = ({ items }: CartDetailsProps) => {
                 <DropdownMenuItem onSelect={() => setOrderId(createId())}>
                   Generate Order ID
                 </DropdownMenuItem>
+                <DropdownMenuItem onSelect={clearCart}>
+                  Clear Cart
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -164,11 +171,32 @@ export const CartDetails = ({ items }: CartDetailsProps) => {
             <div className="font-semibold">Order Details</div>
             <ul className="grid gap-3">
               {items.map((item) => (
-                <li key={item.id} className="flex items-center justify-between">
-                  <span className="text-muted-foreground">
-                    {item.name} x <span>{item.count}</span>
-                  </span>
-                  <span>{convertFloatToIDR(item.price * item.count)}</span>
+                <li
+                  key={item.id}
+                  className="flex items-center gap-4 justify-between"
+                >
+                  <div className="flex items-center gap-1">
+                    <Image
+                      src={item.imageUrl}
+                      alt={item.name}
+                      width={50}
+                      height={50}
+                      className="rounded-lg"
+                    />
+                    <span className="text-muted-foreground">
+                      {item.name} x <span>{item.count}</span>
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span>{convertFloatToIDR(item.price * item.count)}</span>
+                    <Button
+                      variant={"destructive"}
+                      size={"icon"}
+                      onClick={() => deleteItem(item.id)}
+                    >
+                      <GoTrash className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </li>
               ))}
             </ul>
