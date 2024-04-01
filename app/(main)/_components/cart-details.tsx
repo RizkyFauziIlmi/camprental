@@ -86,7 +86,7 @@ export const CartDetails = ({ items }: CartDetailsProps) => {
   const fee = 2_000;
   const total = subTotalDate + fee;
 
-  const isDisabledCheckout = !date?.from || !date?.to;
+  const isDisabledCheckout = !date?.from || !date?.to || daysDifference === 0;
 
   return (
     <div className="py-4 space-y-2">
@@ -266,8 +266,11 @@ export const CartDetails = ({ items }: CartDetailsProps) => {
           </div>
         </CardFooter>
       </Card>
-      <Button className="mt-2 w-full" disabled={isDisabledCheckout}>
-        Checkout
+      <Button
+        className="mt-2 w-full"
+        disabled={isDisabledCheckout}
+      >
+        {isDisabledCheckout ? "Invalid Date" : "Checkout"}
       </Button>
     </div>
   );
