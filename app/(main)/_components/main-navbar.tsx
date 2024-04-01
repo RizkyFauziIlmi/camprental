@@ -6,11 +6,25 @@ import { PiShoppingCartLight } from "react-icons/pi";
 import { UserButton } from "./user-button";
 import { User } from "next-auth";
 import { NavbarItem } from "./navbar-item";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Image from "next/image";
 import logoImage from "@/public/logo.png";
+import { useCurrentRole } from "@/hooks/use-current-role";
+import { Badge } from "@/components/ui/badge";
+import { useCartStore } from "@/hooks/use-cart";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { CartDetails } from "./cart-details";
 
 export const MainNavbar = ({ user }: { user: User | null | undefined }) => {
+  const { items, itemsCount } = useCartStore();
+  const role = useCurrentRole();
+
   return (
     <div className="flex justify-center sticky top-0 z-50">
       <nav className="w-11/12 flex items-center bg-background dark:border justify-between shadow-lg p-2 rounded-b-lg">
@@ -42,9 +56,44 @@ export const MainNavbar = ({ user }: { user: User | null | undefined }) => {
           <Button variant={"outline"} size={"icon"} className="rounded-full">
             <CiSearch className="w-4 h-4" />
           </Button>
-          <Button variant={"outline"} size={"icon"} className="rounded-full">
-            <PiShoppingCartLight className="w-4 h-4" />
-          </Button>
+          {role !== "ADMIN" && (
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  size={"icon"}
+                  className="rounded-full relative"
+                >
+                  <PiShoppingCartLight className="w-4 h-4" />
+                  {itemsCount > 0 && (
+                    <Badge
+                      variant={"destructive"}
+                      className="absolute -top-2 -right-2 rounded-full h-5 w-5 items-center justify-center text-xs"
+                    >
+                      {itemsCount}
+                    </Badge>
+                  )}
+                </Button>
+              </SheetTrigger>
+              <SheetContent
+                className="overflow-auto w-full md:w-[540px]"
+                side={"right"}
+              >
+                <SheetHeader>
+                  <SheetTitle>Checkout Your Order</SheetTitle>
+                  <SheetDescription className="mb-4">
+                    Complete payment to rent items.
+                  </SheetDescription>
+                  {itemsCount > 0 ? (
+                    <>
+                      <CartDetails items={items} />
+                      <Button className="mt-2">Checkout</Button>
+                    </>
+                  ) : null}
+                </SheetHeader>
+              </SheetContent>
+            </Sheet>
+          )}
           <UserButton user={user} />
         </div>
       </nav>
