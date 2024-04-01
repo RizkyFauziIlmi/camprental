@@ -77,7 +77,7 @@ export const MainNavbar = ({ user }: { user: User | null | undefined }) => {
                 </Button>
               </SheetTrigger>
               <SheetContent
-                className="overflow-auto w-full md:w-[540px]"
+                className="overflow-auto w-full md:w-fit"
                 side={"right"}
               >
                 <SheetHeader>
