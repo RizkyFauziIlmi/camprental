@@ -1,12 +1,26 @@
-import { MainNavbar } from "./_components/main-navbar";
-import { currentUser } from "@/lib/auth";
+"use client";
 
-export default async function MainLayout({
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { MainNavbar } from "./_components/main-navbar";
+import { useEffect } from "react";
+import { CartItem, useCartStore } from "@/hooks/use-cart";
+import { useReadLocalStorage } from "usehooks-ts";
+
+export default function MainLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await currentUser();
+  const user = useCurrentUser();
+  const { setItems } = useCartStore();
+  const cartStorage = useReadLocalStorage<{
+    items: CartItem[];
+  }>("cart-storage");
+
+  useEffect(() => {
+    setItems(cartStorage?.items ?? []);
+  }, [cartStorage, setItems]);
+
   return (
     <div>
       <MainNavbar user={user} />
