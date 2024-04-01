@@ -20,6 +20,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { CartDetails } from "./cart-details";
+import { ItemCartNotFound } from "./item-cart-not-found";
 
 export const MainNavbar = ({ user }: { user: User | null | undefined }) => {
   const { items, itemsCount } = useCartStore();
@@ -81,16 +82,18 @@ export const MainNavbar = ({ user }: { user: User | null | undefined }) => {
               >
                 <SheetHeader>
                   <SheetTitle>Checkout Your Order</SheetTitle>
-                  <SheetDescription className="mb-4">
+                  <SheetDescription>
                     Complete payment to rent items.
                   </SheetDescription>
-                  {itemsCount > 0 ? (
-                    <>
-                      <CartDetails items={items} />
-                      <Button className="mt-2">Checkout</Button>
-                    </>
-                  ) : null}
                 </SheetHeader>
+                {itemsCount > 0 ? (
+                  <>
+                    <CartDetails items={items} />
+                    <Button className="mt-2 w-full">Checkout</Button>
+                  </>
+                ) : (
+                  <ItemCartNotFound />
+                )}
               </SheetContent>
             </Sheet>
           )}

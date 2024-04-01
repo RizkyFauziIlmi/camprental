@@ -150,10 +150,9 @@ export const CartDetails = ({ items }: CartDetailsProps) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>Edit</DropdownMenuItem>
-                <DropdownMenuItem>Export</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Trash</DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setOrderId(createId())}>
+                  Generate Order Id
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
