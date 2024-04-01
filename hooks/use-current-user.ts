@@ -1,13 +1,7 @@
-"use server";
+import { useSession } from "next-auth/react";
 
-import { auth } from "@/auth";
+export const useCurrentUser = () => {
+  const session = useSession();
 
-export const useCurrentUser = async () => {
-  try {
-    const session = await auth();
-
-    return session?.user;
-  } catch (error) {
-    return null;
-  }
+  return session.data?.user;
 };
