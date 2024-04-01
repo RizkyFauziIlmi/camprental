@@ -89,7 +89,6 @@ export const MainNavbar = ({ user }: { user: User | null | undefined }) => {
                 {itemsCount > 0 ? (
                   <>
                     <CartDetails items={items} />
-                    <Button className="mt-2 w-full">Checkout</Button>
                   </>
                 ) : (
                   <ItemCartNotFound />

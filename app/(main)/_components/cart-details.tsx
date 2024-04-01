@@ -83,6 +83,8 @@ export const CartDetails = ({ items }: CartDetailsProps) => {
   const fee = 2_000;
   const total = subTotalDate + fee;
 
+  const isDisabledCheckout = !date?.from || !date?.to;
+
   return (
     <div className="py-4 space-y-2">
       <Popover>
@@ -151,7 +153,7 @@ export const CartDetails = ({ items }: CartDetailsProps) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onSelect={() => setOrderId(createId())}>
-                  Generate Order Id
+                  Generate Order ID
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -229,11 +231,16 @@ export const CartDetails = ({ items }: CartDetailsProps) => {
           <div className="text-xs text-muted-foreground">
             You must return the items by{" "}
             <time dateTime="2023-11-23">
-              {formatDate(date?.to as Date, "MMMM dd, yyyy")}
+              {date?.to !== undefined
+                ? formatDate(date?.to as Date, "MMMM dd, yyyy")
+                : "(select date first!)"}
             </time>
           </div>
         </CardFooter>
       </Card>
+      <Button className="mt-2 w-full" disabled={isDisabledCheckout}>
+        Checkout
+      </Button>
     </div>
   );
 };
