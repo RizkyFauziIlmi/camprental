@@ -19,7 +19,7 @@ import { Separator } from "@/components/ui/separator";
 import { CartItem, useCartStore } from "@/hooks/use-cart";
 import { convertFloatToIDR } from "@/lib/string";
 import { addDays, differenceInDays, format, formatDate } from "date-fns";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { BsCopy } from "react-icons/bs";
 import { IoMdMore } from "react-icons/io";
 import { DateRange } from "react-day-picker";
@@ -35,12 +35,18 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { init } from "@paralleldrive/cuid2";
 import Image from "next/image";
 import { GoTrash } from "react-icons/go";
+import { checkout } from "@/actions/payment";
+import { toast } from "sonner";
+import { MdError, MdPayment } from "react-icons/md";
+import { User } from "next-auth";
+import { AiOutlineLoading } from "react-icons/ai";
 
 interface CartDetailsProps {
   items: CartItem[];
 }
 
 export const CartDetails = ({ items }: CartDetailsProps) => {
+  const [isPending, startTransition] = useTransition();
   const { clearCart, deleteItem } = useCartStore();
 
   const createId = init({
@@ -87,6 +93,28 @@ export const CartDetails = ({ items }: CartDetailsProps) => {
   const total = subTotalDate + fee;
 
   const isDisabledCheckout = !date?.from || !date?.to || daysDifference === 0;
+
+  const pay = () => {
+    startTransition(() => {
+      checkout(
+        orderId,
+        items,
+        total,
+        daysDifference,
+        user as User,
+        date?.from as Date,
+        date?.to as Date
+      ).then((res) => {
+        if (res) {
+          toast(res.error, {
+            icon: <MdError className="w-4 h-4" />,
+          });
+        }
+
+        clearCart();
+      });
+    });
+  };
 
   return (
     <div className="py-4 space-y-2">
@@ -144,7 +172,8 @@ export const CartDetails = ({ items }: CartDetailsProps) => {
               </Button>
             </CardTitle>
             <CardDescription>
-              You will rent items in {daysDifference} days
+              You will rent items in {daysDifference}{" "}
+              {daysDifference <= 1 ? "day" : "days"}
             </CardDescription>
           </div>
           <div className="ml-auto flex items-center gap-1">
@@ -268,9 +297,19 @@ export const CartDetails = ({ items }: CartDetailsProps) => {
       </Card>
       <Button
         className="mt-2 w-full"
-        disabled={isDisabledCheckout}
+        disabled={isDisabledCheckout || isPending}
+        onClick={pay}
       >
-        {isDisabledCheckout ? "Invalid Date" : "Checkout"}
+        {isPending ? (
+          <AiOutlineLoading className="h-4 w-4 mr-2 animate-spin" />
+        ) : (
+          <MdPayment className="w-4 h-4 mr-2" />
+        )}
+        {isDisabledCheckout
+          ? "Invalid Date"
+          : isPending
+          ? "Creating Booking"
+          : "Checkout"}
       </Button>
     </div>
   );

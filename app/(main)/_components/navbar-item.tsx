@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useCurrentRole } from "@/hooks/use-current-role";
 
 interface NavbarItemProps {
   isMobile?: boolean;
@@ -11,10 +12,12 @@ interface NavbarItemProps {
 export const NavbarItem = ({ isMobile = false }: NavbarItemProps) => {
   const pathname = usePathname();
   const router = useRouter();
+  const role = useCurrentRole();
 
   const isHome = pathname === "/";
   const isExplore = pathname === "/explore";
   const isGuide = pathname === "/guide";
+  const isBooking = pathname === "/bookings";
 
   return (
     <div className={cn(isMobile ? "flex-col mt-4" : "flex-row", "flex gap-2")}>
@@ -49,6 +52,19 @@ export const NavbarItem = ({ isMobile = false }: NavbarItemProps) => {
       >
         Guide
       </Button>
+      {role === "USER" && (
+        <Button
+          variant={isMobile ? "ghost" : "link"}
+          onClick={() => router.push("/bookings")}
+          className={cn(
+            isBooking ? "text-primary" : "text-muted-foreground",
+            isBooking && isMobile ? "bg-accent" : "",
+            "font-semibold hover:no-underline hover:text-primary"
+          )}
+        >
+          Bookings
+        </Button>
+      )}
     </div>
   );
 };

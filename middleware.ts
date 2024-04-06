@@ -6,6 +6,7 @@ import {
   authRoutes,
   protectedRoute,
   publicRoutes,
+  userOnlyRoutes,
 } from "./routes";
 import { currentRole } from "./lib/auth";
 export const { auth } = NextAuth(authConfig);
@@ -21,6 +22,7 @@ export default auth(async (req) => {
   const isProtectedRoute = protectedRoute.includes(
     "/" + nextUrl.pathname.split("/")[1]
   );
+  const isUserOnlyRoute = userOnlyRoutes.includes(nextUrl.pathname);
 
   if (isApiAuthRoute) {
     return;
@@ -34,6 +36,10 @@ export default auth(async (req) => {
   }
 
   const role = await currentRole();
+
+  if (isUserOnlyRoute && role === "ADMIN") {
+    return Response.redirect(new URL("/explore", nextUrl));
+  }
 
   if (isProtectedRoute && role !== "ADMIN") {
     return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));

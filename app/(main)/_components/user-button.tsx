@@ -24,11 +24,13 @@ import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { BsBoxSeamFill } from "react-icons/bs";
 import { useCurrentRole } from "@/hooks/use-current-role";
 import { useRouter } from "next/navigation";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
-export const UserButton = ({ user }: { user: User | null | undefined }) => {
+export const UserButton = () => {
   const { setTheme } = useTheme();
   const router = useRouter();
   const role = useCurrentRole();
+  const user = useCurrentUser();
 
   const logout = async () => {
     await signOut();
