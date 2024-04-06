@@ -24,3 +24,35 @@ export function convertFloatToIDR(amount: number): string {
     });
     return formatter.format(amount);
 }
+
+/**
+ * Retrieves the last name from a full name.
+ * 
+ * @param fullName - The full name from which to extract the last name.
+ * @returns The last name extracted from the full name.
+ */
+export function getLastName(fullName: string) {
+  // Split the full name into words
+  var nameParts = fullName.split(" ");
+
+  // Extract the last word as the last name
+  var lastName = nameParts[nameParts.length - 1];
+
+  return lastName;
+}
+
+/**
+ * Extracts the first name from a full name.
+ * 
+ * @param fullName - The full name from which to extract the first name.
+ * @returns The first name extracted from the full name.
+ */
+export function getFirstName(fullName: string) {
+  // Split the full name into words
+  var nameParts = fullName.split(" ");
+
+  // Extract the first word as the first name
+  var firstName = nameParts[0];
+
+  return firstName;
+}

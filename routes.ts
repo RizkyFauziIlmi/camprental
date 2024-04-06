@@ -2,13 +2,13 @@
  * These routes do not required authentication
  * @type {string[]}
  */
-export const publicRoutes = ["/"];
+export const publicRoutes = ["/", "/payment-status"];
 
 /**
  * These routes do required authentication role admin
  * @type {string[]}
  */
-export const protectedRoute = ["/manage-item", "/dashboard"]
+export const protectedRoute = ["/manage-item", "/dashboard"];
 
 /**
  *  an array of routes that are used for authentication
@@ -16,6 +16,12 @@ export const protectedRoute = ["/manage-item", "/dashboard"]
  * @type {string[]}
  */
 export const authRoutes = ["/auth/login"];
+
+/**
+ * These routes are only accessible to logged in users
+ * @type {string[]}
+ */
+export const userOnlyRoutes = ["/bookings"];
 
 /**
  * The prefix for API authentication routes

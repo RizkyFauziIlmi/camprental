@@ -11,7 +11,6 @@ export default function MainLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = useCurrentUser();
   const { setItems } = useCartStore();
   const cartStorage = useReadLocalStorage<{
     items: CartItem[];
@@ -23,7 +22,7 @@ export default function MainLayout({
 
   return (
     <div>
-      <MainNavbar user={user} />
+      <MainNavbar />
       {children}
     </div>
   );

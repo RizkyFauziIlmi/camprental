@@ -22,7 +22,7 @@ import {
 import { CartDetails } from "./cart-details";
 import { ItemCartNotFound } from "./item-cart-not-found";
 
-export const MainNavbar = ({ user }: { user: User | null | undefined }) => {
+export const MainNavbar = () => {
   const { items, itemsCount } = useCartStore();
   const role = useCurrentRole();
 
@@ -96,7 +96,7 @@ export const MainNavbar = ({ user }: { user: User | null | undefined }) => {
               </SheetContent>
             </Sheet>
           )}
-          <UserButton user={user} />
+          <UserButton />
         </div>
       </nav>
     </div>

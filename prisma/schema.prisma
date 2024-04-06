@@ -54,6 +54,7 @@ model User {
   role          UserRole  @default(USER)
   accounts      Account[]
   sessions      Session[]
+  Bookings      Booking[]
 
   createdAt DateTime @default(now())
 }
@@ -89,6 +90,46 @@ model Item {
   maxBookings Int          @default(1)
   maxDate     Int          @default(1)
   available   Boolean      @default(true)
+
+  OrderItem OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  quantity  Int
+  price     Float
+  itemId    String
+  bookingId String?
+
+  item    Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  Booking Booking? @relation(fields: [bookingId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum BookingStatus {
+  NOTPAID
+  PAIDOFF
+  TAKEN
+  COMPLETED
+  CANCELLED
+}
+
+model Booking {
+  id         String        @id @default(cuid())
+  paymentUrl String
+  total      Float
+  userId     String
+  startDate  DateTime
+  endDate    DateTime
+  status     BookingStatus @default(NOTPAID)
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
