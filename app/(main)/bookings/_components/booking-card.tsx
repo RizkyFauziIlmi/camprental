@@ -159,6 +159,8 @@ export const BookingCard = ({ booking }: BookingCardProps) => {
                       src={orderItem.item.imageUrl}
                       alt={orderItem.item.name}
                       className="w-10 h-10 rounded-lg object-contain"
+                      width={30}
+                      height={30}
                     />
                   </TableCell>
                   <TableCell>{orderItem.item.name}</TableCell>
