@@ -20,57 +20,16 @@ export const LoginCard = () => {
   };
 
   return (
-    <div className="space-y-4 rounded-md shadow-lg p-4 border-[1px]">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center">
-          <Button
-            size={"icon"}
-            variant={"ghost"}
-            className="group"
-            onClick={() => router.push("/")}
-          >
-            <MdArrowBack className="w-4 h-4 group-hover:-translate-x-1 group-hover:scale-105 transition-all ease-in-out" />
-          </Button>
-          <Image src={logo} alt="logo" width={80} height={80} priority />
-        </div>
-        <ModeToggle />
-      </div>
-      <div className="space-y-2">
-        <div className="text-lg font-semibold">Login to Camprental</div>
-        <p className="text-sm text-muted-foreground">
-          &quot;Navigate Nature with Confidence: Your Ultimate Camping
-          Companion&quot;
-        </p>
-      </div>
-      <div className="space-y-2 mt-2">
-        <Button
-          variant={"outline"}
-          className="w-full rounded-md"
-          size={"lg"}
-          onClick={() => login("google")}
-        >
-          <FaGoogle className="w-4 h-4 mr-2" />
-          Continue with Google
-        </Button>
-        <Button
-          variant={"outline"}
-          className="w-full rounded-md"
-          size={"lg"}
-          onClick={() => login("github")}
-        >
-          <FaGithub className="w-4 h-4 mr-2" />
-          Continue with Github
-        </Button>
-        <Button
-          variant={"outline"}
-          className="w-full rounded-md"
-          size={"lg"}
-          onClick={() => login("discord")}
-        >
-          <FaDiscord className="w-4 h-4 mr-2" />
-          Continue with Discord
-        </Button>
-      </div>
+    <div className="flex flex-col gap-4">
+      <Button onClick={() => login("google")}>
+        Login with Google <FaGoogle className="w-4 h-4 ml-2" />
+      </Button>
+      <Button onClick={() => login("github")}>
+        Login with Github <FaGithub className="w-4 h-4 ml-2" />
+      </Button>
+      <Button onClick={() => login("discord")}>
+        Login with Discord <FaDiscord className="w-4 h-4 ml-2" />
+      </Button>
     </div>
   );
 };
