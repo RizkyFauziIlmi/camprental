@@ -4,6 +4,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useCurrentRole } from "@/hooks/use-current-role";
+import { toast } from "sonner"
+import { IoIosConstruct } from "react-icons/io";
 
 interface NavbarItemProps {
   isMobile?: boolean;
@@ -28,6 +30,9 @@ export const NavbarItem = ({ isMobile = false }: NavbarItemProps) => {
           isHome && isMobile ? "bg-accent" : "",
           "font-semibold hover:no-underline hover:text-primary"
         )}
+        onClick={() => toast("This feature under development", {
+          icon: <IoIosConstruct className="h-4 w-4" />,
+        })}
       >
         Blog
       </Button>
@@ -49,6 +54,9 @@ export const NavbarItem = ({ isMobile = false }: NavbarItemProps) => {
           isGuide && isMobile ? "bg-accent" : "",
           "font-semibold hover:no-underline hover:text-primary"
         )}
+        onClick={() => toast("This feature under development", {
+          icon: <IoIosConstruct className="h-4 w-4" />,
+        })}
       >
         Guide
       </Button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { BookingWithOrderItemsAndItems } from "@/types";
+import { BookingsWithOrderItemsAndItems } from "@/types";
 import {
   Card,
   CardContent,
@@ -31,7 +31,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { IoMdMore } from "react-icons/io";
-import { MdCheckCircle, MdError, MdPayment } from "react-icons/md";
+import { MdCheckCircle, MdError, MdPayment, MdReceipt } from "react-icons/md";
 import { FaPeopleCarryBox } from "react-icons/fa6";
 import Link from "next/link";
 import { useEffect, useRef, useState, useTransition } from "react";
@@ -54,7 +54,7 @@ import useScroll from "@/hooks/use-scroll";
 import Image from "next/image";
 
 interface BookingCardProps {
-  booking: BookingWithOrderItemsAndItems;
+  booking: BookingsWithOrderItemsAndItems;
 }
 
 export const BookingCard = ({ booking }: BookingCardProps) => {
@@ -89,20 +89,23 @@ export const BookingCard = ({ booking }: BookingCardProps) => {
   const total = subTotalDate + fee;
 
   const cardDescriptionText =
-    booking.status === "PAIDOFF"
-      ? "You have paid off this invoice, take the item now"
-      : booking.status === "NOTPAID"
-      ? "You have not paid off this invoice, pay now to continue the transaction"
-      : booking.status === "COMPLETED"
-      ? "You have completed this invoice"
-      : booking.status === "CANCELLED"
-      ? "You have cancelled this invoice"
-      : booking.status === "TAKEN"
-      ? `You have taken the items, make sure to return the item before ${format(
-          booking.endDate,
-          "PPP"
-        )}`
-      : "";
+    booking.status === "PENALTY" ?
+      "You have not returned the item on time, pay the penalty to continue the transaction"
+      :
+      booking.status === "PAIDOFF"
+        ? "You have paid off this invoice, take the item now"
+        : booking.status === "NOTPAID"
+          ? "You have not paid off this invoice, pay now to continue the transaction"
+          : booking.status === "COMPLETED"
+            ? "You have completed this invoice"
+            : booking.status === "CANCELLED"
+              ? "You have cancelled this invoice"
+              : booking.status === "TAKEN"
+                ? `You have taken the items, make sure to return the item before ${format(
+                  booking.endDate,
+                  "PPP"
+                )}`
+                : "";
 
   return (
     <div className="w-11/12">
@@ -120,10 +123,10 @@ export const BookingCard = ({ booking }: BookingCardProps) => {
                   booking.status === "PAIDOFF" || booking.status === "COMPLETED"
                     ? "success"
                     : booking.status === "NOTPAID"
-                    ? "secondary"
-                    : booking.status === "CANCELLED"
-                    ? "destructive"
-                    : "default"
+                      ? "secondary"
+                      : booking.status === "CANCELLED" || booking.status === "PENALTY"
+                        ? "destructive"
+                        : "default"
                 }
                 className={"w-fit"}
               >
@@ -201,7 +204,7 @@ export const BookingCard = ({ booking }: BookingCardProps) => {
           </Table>
         </CardContent>
         <CardFooter className="space-x-2">
-          {booking.status === "PAIDOFF" && (
+          {booking.status === "PAIDOFF" ? (
             <Button asChild>
               <Link
                 href="https://maps.app.goo.gl/3araot7QVNrhHNuq6"
@@ -211,65 +214,82 @@ export const BookingCard = ({ booking }: BookingCardProps) => {
                 Pick Up Now
               </Link>
             </Button>
+          ) : booking.status === "NOTPAID" ? (
+            <Button
+              onClick={() => router.push(booking.paymentUrl)}
+              disabled={booking.status !== "NOTPAID"}
+            >
+              <MdPayment className="w-4 h-4 mr-2" />
+              Pay Now
+            </Button>
+          ) : booking.status === "PENALTY" ? (
+            <Button
+              onClick={() => router.push(booking.paymentUrl)}
+              variant={"destructive"}
+              disabled={booking.status !== "PENALTY"}
+            >
+              <MdPayment className="w-4 h-4 mr-2" />
+              Pay Penalty
+            </Button>
+          ) : (
+            <Button asChild>
+              <Link href={`/invoice/${booking.id}`}>
+                <MdReceipt className="w-4 h-4 mr-2" />
+                View Invoice
+              </Link>
+            </Button>
           )}
-          <Button
-            onClick={() => router.push(booking.paymentUrl)}
-            disabled={booking.status !== "NOTPAID"}
-          >
-            <MdPayment className="w-4 h-4 mr-2" />
-            Pay Now
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant={"outline"} size={"icon"}>
-                <IoMdMore />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              {booking.status === "NOTPAID" && (
-                <DropdownMenuItem
-                  onSelect={() => {
-                    startNewLinkTransition(() => {
-                      generateNewPaymentLink(booking.id)
-                        .then((res) => {
-                          if (res.success) {
-                            toast(res.success, {
-                              icon: <MdCheckCircle className="w-4 h-4" />,
-                            });
-                          }
+          {booking.status === "NOTPAID" && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant={"outline"} size={"icon"}>
+                  <IoMdMore />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                {booking.status === "NOTPAID" && (
+                  <DropdownMenuItem
+                    onSelect={() => {
+                      startNewLinkTransition(() => {
+                        generateNewPaymentLink(booking.id)
+                          .then((res) => {
+                            if (res.success) {
+                              toast(res.success, {
+                                icon: <MdCheckCircle className="w-4 h-4" />,
+                              });
+                            }
 
-                          if (res.error) {
-                            toast(res.error, {
+                            if (res.error) {
+                              toast(res.error, {
+                                icon: <MdError className="w-4 h-4" />,
+                              });
+                            }
+                          })
+                          .catch((err) => {
+                            toast("Something went wrong", {
                               icon: <MdError className="w-4 h-4" />,
                             });
-                          }
-                        })
-                        .catch((err) => {
-                          toast("Something went wrong", {
-                            icon: <MdError className="w-4 h-4" />,
                           });
-                        });
-                    });
-                  }}
-                >
-                  {isNewLinkPending ? (
-                    <AiOutlineLoading className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <CiLink className="w-4 h-4 mr-2" />
-                  )}
-                  {isNewLinkPending
-                    ? "Generating New Link"
-                    : "Generate New Payment Link"}
-                </DropdownMenuItem>
-              )}
-              {booking.status !== "PAIDOFF" && (
+                      });
+                    }}
+                  >
+                    {isNewLinkPending ? (
+                      <AiOutlineLoading className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <CiLink className="w-4 h-4 mr-2" />
+                    )}
+                    {isNewLinkPending
+                      ? "Generating New Link"
+                      : "Generate New Payment Link"}
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem onSelect={() => setIsAlertOpen(true)}>
                   <GoTrash className="w-4 h-4 mr-2" />
                   Delete Booking
                 </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </CardFooter>
       </Card>
       <AlertDialog open={isAlertOpen}>
