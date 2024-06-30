@@ -52,10 +52,10 @@ export const UserButton = () => {
             <DropdownMenuLabel>Admin</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => router.push("/dashboard")}>
                 <MdOutlineSpaceDashboard className="w-4 h-4 mr-2" />
                 Dashboard
-              </DropdownMenuItem>
+              </DropdownMenuItem >
               <DropdownMenuItem onSelect={() => router.push("/manage-item")}>
                 <BsBoxSeamFill className="w-4 h-4 mr-2" />
                 Manage Item

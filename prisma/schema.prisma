@@ -117,16 +117,19 @@ enum BookingStatus {
   TAKEN
   COMPLETED
   CANCELLED
+  PENALTY
 }
 
 model Booking {
-  id         String        @id @default(cuid())
-  paymentUrl String
-  total      Float
-  userId     String
-  startDate  DateTime
-  endDate    DateTime
-  status     BookingStatus @default(NOTPAID)
+  id            String        @id @default(cuid())
+  paymentUrl    String
+  total         Float
+  userId        String
+  startDate     DateTime
+  endDate       DateTime
+  status        BookingStatus @default(NOTPAID)
+  phoneNumber   String
+  penaltyAmount Float?
 
   user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   orderItems OrderItem[]

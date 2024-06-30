@@ -13,6 +13,7 @@ import { differenceInDays } from "date-fns";
 
 export const checkout = async (
   orderId: string,
+  phoneNumber: string,
   cartItems: CartItem[],
   total: number,
   daysDifference: number,
@@ -94,6 +95,7 @@ export const checkout = async (
         userId: customer.id as string,
         startDate,
         endDate,
+        phoneNumber,
       },
     });
 
@@ -188,3 +190,70 @@ export const generateNewPaymentLink = async (bookingId: string) => {
     return { error: "Error Generating Payment Link" };
   }
 };
+
+export const createPenaltyPayment = async (bookingId: string) => {
+  const user = await currentUser();
+  const booking = await db.booking.findUnique({
+    where: {
+      id: bookingId,
+    },
+    include: {
+      orderItems: {
+        include: {
+          item: true,
+        },
+      },
+    },
+  });
+
+  if (!booking) {
+    return { error: "Invalid Booking ID" };
+  }
+
+  if (booking.userId !== user?.id && user?.role !== "ADMIN") {
+    return { error: "Unauthorized" };
+  }
+
+  if (booking.status !== "TAKEN") {
+    return { error: `Booking has been ${booking.status.toLowerCase()}` };
+  }
+
+  const diffDays = differenceInDays(new Date(), booking.endDate);
+  const penalty = diffDays * 2000;
+
+  const url = await snap.createTransactionRedirectUrl({
+    transaction_details: {
+      order_id: createId(),
+      gross_amount: penalty,
+    },
+    item_details: [
+      {
+        id: createId(),
+        price: penalty,
+        quantity: 1,
+        name: "Penalty Fee",
+      },
+    ]
+  })
+
+  try {
+    // update payment link
+    await db.booking.update({
+      where: {
+        id: booking.id
+      },
+      data: {
+        status: "PENALTY",
+        penaltyAmount: penalty,
+        paymentUrl: url
+      }
+    })
+
+    revalidatePath("/booking");
+    revalidatePath("/dashboard");
+
+    return { success: "Success Creating Penalty Payment" };
+  } catch {
+    return { error: "Error Creating Penalty Payment" };
+  }
+}

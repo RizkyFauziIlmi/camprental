@@ -15,6 +15,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import PhoneInput, { isPossiblePhoneNumber, isValidPhoneNumber } from 'react-phone-number-input'
+import 'react-phone-number-input/style.css'
 import { Separator } from "@/components/ui/separator";
 import { CartItem, useCartStore } from "@/hooks/use-cart";
 import { convertFloatToIDR } from "@/lib/string";
@@ -47,6 +49,7 @@ interface CartDetailsProps {
 
 export const CartDetails = ({ items }: CartDetailsProps) => {
   const [isPending, startTransition] = useTransition();
+  const [phoneNumber, setPhoneNumber] = useState("");
   const { clearCart, deleteItem } = useCartStore();
 
   const createId = init({
@@ -98,6 +101,7 @@ export const CartDetails = ({ items }: CartDetailsProps) => {
     startTransition(() => {
       checkout(
         orderId,
+        phoneNumber,
         items,
         total,
         daysDifference,
@@ -295,9 +299,21 @@ export const CartDetails = ({ items }: CartDetailsProps) => {
           </div>
         </CardFooter>
       </Card>
+      <div className="pt-3 pb-1">
+        <PhoneInput
+          placeholder="Enter phone number"
+          style={{
+            width: "100%",
+            padding: "0.5rem 1rem",
+            borderRadius: "0.5rem",
+            border: "1px solid #e5e7eb",
+          }}
+          value={phoneNumber}
+          onChange={(value) => setPhoneNumber(value ? value.toString() : "")} />
+      </div >
       <Button
         className="mt-2 w-full"
-        disabled={isDisabledCheckout || isPending}
+        disabled={isDisabledCheckout || isPending || !isValidPhoneNumber(phoneNumber) || !isPossiblePhoneNumber(phoneNumber)}
         onClick={pay}
       >
         {isPending ? (
@@ -308,8 +324,8 @@ export const CartDetails = ({ items }: CartDetailsProps) => {
         {isDisabledCheckout
           ? "Invalid Date"
           : isPending
-          ? "Creating Booking"
-          : "Checkout"}
+            ? "Creating Booking"
+            : "Checkout"}
       </Button>
     </div>
   );

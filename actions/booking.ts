@@ -2,7 +2,33 @@
 
 import { currentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { Booking } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+
+const incrementStock = async (bookingId: string) => {
+  const orderItems = await db.orderItem.findMany({
+    where: {
+      bookingId,
+    },
+    select: {
+      itemId: true,
+      quantity: true,
+    },
+  });
+
+  for (const orderItem of orderItems) {
+    await db.item.update({
+      where: {
+        id: orderItem.itemId,
+      },
+      data: {
+        stock: {
+          increment: orderItem.quantity,
+        },
+      },
+    });
+  }
+}
 
 export const deleteBooking = async (bookingId: string) => {
   const user = await currentUser();
@@ -22,7 +48,7 @@ export const deleteBooking = async (bookingId: string) => {
     return { error: "Invalid Booking ID" };
   }
 
-  if (booking.userId !== user?.id) {
+  if (booking.userId !== user?.id && user?.role !== "ADMIN") {
     return { error: "Unauthorized" };
   }
 
@@ -32,30 +58,9 @@ export const deleteBooking = async (bookingId: string) => {
 
   try {
     // if booking is not cancelled or completed, increment item stock
-    if (booking.status !== "CANCELLED" && booking.status !== "COMPLETED") {
-        // increment item stock
-        const orderItems = await db.orderItem.findMany({
-          where: {
-            bookingId: booking.id,
-          },
-          select: {
-            itemId: true,
-            quantity: true,
-          },
-        });
-
-        for (const orderItem of orderItems) {
-          await db.item.update({
-            where: {
-              id: orderItem.itemId,
-            },
-            data: {
-              stock: {
-                increment: orderItem.quantity,
-              },
-            },
-          });
-        }
+    if (booking.status !== "COMPLETED") {
+      // increment item stock
+      incrementStock(booking.id);
     }
 
     await db.booking.delete({
@@ -65,9 +70,39 @@ export const deleteBooking = async (bookingId: string) => {
     });
 
     revalidatePath("/booking");
+    revalidatePath("/dashboard");
 
     return { success: `Booking with ID ${booking.id} deleted successfully` };
   } catch (error) {
     return { error: "Error Deleting Booking" };
   }
 };
+
+export const updateBooking = async (bookingId: string, booking: Booking) => {
+  const user = await currentUser();
+
+  if (user?.role !== "ADMIN") {
+    return { error: "Unauthorized" }
+  }
+
+  try {
+    const updatedBooking = await db.booking.update({
+      where: {
+        id: bookingId
+      },
+      data: booking
+    })
+
+    if (updatedBooking.status === "COMPLETED") {
+      incrementStock(booking.id)
+    }
+
+    revalidatePath("/booking");
+    revalidatePath("/dashboard");
+
+    return { success: `Booking with ID ${booking.id} updated successfully` };
+  } catch (error) {
+    console.log(error)
+    return { error: "Error Updating Booking" };
+  }
+}
