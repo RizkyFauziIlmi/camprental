@@ -1,6 +1,6 @@
 {
   "name": "camprental",
-  "version": "0.7.4",
+  "version": "1.7.4",
   "private": true,
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} db/seed.ts"
